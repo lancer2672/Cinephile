@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package pb;
+import "user/create_user.proto";
+option go_package = "/pb";
+
+
+service UserService {
+    rpc CreateUser (user.CreateUserReq) returns (user.CreateUserRes) {
+        
+    }
+    
+}
