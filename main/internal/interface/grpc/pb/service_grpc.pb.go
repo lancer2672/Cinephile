@@ -19,101 +19,101 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	MainService_GetMovies_FullMethodName = "/pb.MainService/GetMovies"
+	MovieService_GetMovies_FullMethodName = "/pb.MovieService/GetMovies"
 )
 
-// MainServiceClient is the client API for MainService service.
+// MovieServiceClient is the client API for MovieService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type MainServiceClient interface {
+type MovieServiceClient interface {
 	GetMovies(ctx context.Context, in *GetMoviesRequest, opts ...grpc.CallOption) (*GetMoviesResponse, error)
 }
 
-type mainServiceClient struct {
+type movieServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewMainServiceClient(cc grpc.ClientConnInterface) MainServiceClient {
-	return &mainServiceClient{cc}
+func NewMovieServiceClient(cc grpc.ClientConnInterface) MovieServiceClient {
+	return &movieServiceClient{cc}
 }
 
-func (c *mainServiceClient) GetMovies(ctx context.Context, in *GetMoviesRequest, opts ...grpc.CallOption) (*GetMoviesResponse, error) {
+func (c *movieServiceClient) GetMovies(ctx context.Context, in *GetMoviesRequest, opts ...grpc.CallOption) (*GetMoviesResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetMoviesResponse)
-	err := c.cc.Invoke(ctx, MainService_GetMovies_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, MovieService_GetMovies_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// MainServiceServer is the server API for MainService service.
-// All implementations must embed UnimplementedMainServiceServer
+// MovieServiceServer is the server API for MovieService service.
+// All implementations must embed UnimplementedMovieServiceServer
 // for forward compatibility.
-type MainServiceServer interface {
+type MovieServiceServer interface {
 	GetMovies(context.Context, *GetMoviesRequest) (*GetMoviesResponse, error)
-	mustEmbedUnimplementedMainServiceServer()
+	mustEmbedUnimplementedMovieServiceServer()
 }
 
-// UnimplementedMainServiceServer must be embedded to have
+// UnimplementedMovieServiceServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedMainServiceServer struct{}
+type UnimplementedMovieServiceServer struct{}
 
-func (UnimplementedMainServiceServer) GetMovies(context.Context, *GetMoviesRequest) (*GetMoviesResponse, error) {
+func (UnimplementedMovieServiceServer) GetMovies(context.Context, *GetMoviesRequest) (*GetMoviesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetMovies not implemented")
 }
-func (UnimplementedMainServiceServer) mustEmbedUnimplementedMainServiceServer() {}
-func (UnimplementedMainServiceServer) testEmbeddedByValue()                     {}
+func (UnimplementedMovieServiceServer) mustEmbedUnimplementedMovieServiceServer() {}
+func (UnimplementedMovieServiceServer) testEmbeddedByValue()                      {}
 
-// UnsafeMainServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to MainServiceServer will
+// UnsafeMovieServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to MovieServiceServer will
 // result in compilation errors.
-type UnsafeMainServiceServer interface {
-	mustEmbedUnimplementedMainServiceServer()
+type UnsafeMovieServiceServer interface {
+	mustEmbedUnimplementedMovieServiceServer()
 }
 
-func RegisterMainServiceServer(s grpc.ServiceRegistrar, srv MainServiceServer) {
-	// If the following call pancis, it indicates UnimplementedMainServiceServer was
+func RegisterMovieServiceServer(s grpc.ServiceRegistrar, srv MovieServiceServer) {
+	// If the following call pancis, it indicates UnimplementedMovieServiceServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&MainService_ServiceDesc, srv)
+	s.RegisterService(&MovieService_ServiceDesc, srv)
 }
 
-func _MainService_GetMovies_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _MovieService_GetMovies_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetMoviesRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MainServiceServer).GetMovies(ctx, in)
+		return srv.(MovieServiceServer).GetMovies(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: MainService_GetMovies_FullMethodName,
+		FullMethod: MovieService_GetMovies_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MainServiceServer).GetMovies(ctx, req.(*GetMoviesRequest))
+		return srv.(MovieServiceServer).GetMovies(ctx, req.(*GetMoviesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// MainService_ServiceDesc is the grpc.ServiceDesc for MainService service.
+// MovieService_ServiceDesc is the grpc.ServiceDesc for MovieService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var MainService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "pb.MainService",
-	HandlerType: (*MainServiceServer)(nil),
+var MovieService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "pb.MovieService",
+	HandlerType: (*MovieServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "GetMovies",
-			Handler:    _MainService_GetMovies_Handler,
+			Handler:    _MovieService_GetMovies_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

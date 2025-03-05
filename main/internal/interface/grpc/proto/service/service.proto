@@ -5,19 +5,32 @@ package pb;
 
 option go_package = "/internal/interface/grpc/pb";
 
+import "google/protobuf/timestamp.proto";
 
 message Movie {
     int64 movie_id = 1; 
-};
-message GetMoviesRequest {
-    int32  movie_id      = 1;
-}
-message GetMoviesResponse {
-    //small number'd be better
-    int32  movie_id      = 1;
+    string title = 2;
+    repeated string tags = 3;
+    int64 duration = 4;  // Đơn vị giây
+    int32 age_limit = 5;
+    string director = 6;
+    repeated string actors = 7;
+    google.protobuf.Timestamp release_date = 8;
+    string content_description = 9;
+    string trailer = 10;
+    string poster = 11;
 }
 
-service MainService {
+message GetMoviesRequest {
+    int32 page = 1; 
+    int32 size = 2; 
+}
+
+message GetMoviesResponse {
+    repeated Movie movies = 1; 
+    int32 total_pages = 2;  
+}
+service MovieService {
     rpc GetMovies (GetMoviesRequest) returns (GetMoviesResponse);
 }
 
