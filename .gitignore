@@ -80,7 +80,7 @@ Thumbs.db
 # Environment Variables
 # Keep .env files specific to each service
 # Ignore global or sensitive env files
-**/.env
+**/*.env
 
 # TypeScript
 **/*.tsbuildinfo
