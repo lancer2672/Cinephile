@@ -9,6 +9,8 @@ import (
 	converter "github.com/lancer2672/cinephile/main/internal/interface/grpc/converter"
 	"github.com/lancer2672/cinephile/main/internal/interface/grpc/pb"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type MovieHandler struct {
@@ -25,7 +27,8 @@ func RegisterMovieHandler(grpcServer *grpc.Server, service repository.Store) {
 func (m *MovieHandler) GetMovies(ctx context.Context, req *pb.GetMoviesRequest) (*pb.GetMoviesResponse, error) {
 	movies, err := m.service.GetMovies(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get movies: %v", err)
+		fmt.Println(">>>ERROR: ", err)
+		return nil, status.Errorf(codes.Internal, "Failed to get recent movies")
 	}
 
 	result := make([]*pb.Movie, 0, len(movies))
