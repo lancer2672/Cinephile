@@ -1,17 +1,80 @@
 syntax = "proto3";
 
 package pb;
-// import "movie/movie.proto";
 
 option go_package = "/internal/interface/grpc/pb";
 
 import "google/protobuf/timestamp.proto";
-
+import "google/protobuf/any.proto";
+// ===================== MESSAGE =====================
 message Movie {
-    int64 movie_id = 1; 
+    int64 id = 1;
+    string title = 2;
+    int64 duration = 3;
+    int32 age_limit = 4;
+    string director = 5;
+    repeated string actors = 6;
+    google.protobuf.Timestamp release_date = 7;
+    string description = 8;
+    string trailer = 9;
+    string country = 10;
+    string genre = 11;
+    string poster = 12;
+    string status = 13; // ENUM ('Coming Soon', 'Now Showing', 'Ended')
+    google.protobuf.Timestamp created_at = 14;
+    google.protobuf.Timestamp updated_at = 15;
+}
+
+// ===================== REQUEST/RESPONSE =====================
+
+// --- GET LIST MOVIES ---
+message GetMoviesRequest {
+    int32 page = 1;
+    int32 size = 2;
+    string status = 3;
+    string genre = 4;
+    string country = 5;
+    string search = 6;
+}
+message GetMoviesResponse {
+    repeated Movie movies = 1;
+    int32 total_pages = 2;
+}
+
+// --- GET MOVIE DETAIL ---
+message GetMovieRequest {
+    int64 movie_id = 1;
+}
+message GetMovieResponse {
+    Movie movie = 1;
+}
+
+// --- CREATE MOVIE ---
+message CreateMovieRequest {
+    string title = 1;
+    repeated string tags = 2;
+    int64 duration = 3;
+    int32 age_limit = 4;
+    string director = 5;
+    repeated string actors = 6;
+    google.protobuf.Timestamp release_date = 7;
+    string content_description = 8;
+    string trailer = 9;
+    string poster = 10;
+    string status = 11;
+    string genre = 12;
+    string country = 13;
+}
+message CreateMovieResponse {
+    Movie movie = 1;
+}
+
+// --- UPDATE MOVIE ---
+message UpdateMovieRequest {
+    int64 movie_id = 1;
     string title = 2;
     repeated string tags = 3;
-    int64 duration = 4;  // Đơn vị giây
+    int64 duration = 4;
     int32 age_limit = 5;
     string director = 6;
     repeated string actors = 7;
@@ -19,18 +82,71 @@ message Movie {
     string content_description = 9;
     string trailer = 10;
     string poster = 11;
+    string status = 12;
+    string genre = 13;
+    string country = 14;
+}
+message UpdateMovieResponse {
+    Movie movie = 1;
 }
 
-message GetMoviesRequest {
-    int32 page = 1; 
-    int32 size = 2; 
+// --- DELETE MOVIE ---
+message DeleteMovieRequest {
+    int64 movie_id = 1;
+}
+message DeleteMovieResponse {
+    string message = 1;
 }
 
-message GetMoviesResponse {
-    repeated Movie movies = 1; 
-    int32 total_pages = 2;  
+// --- GET UPCOMING MOVIES ---
+message GetUpcomingMoviesRequest {
+    int32 page = 1;
+    int32 size = 2;
 }
+message GetUpcomingMoviesResponse {
+    repeated Movie movies = 1;
+}
+
+// --- GET NOW SHOWING MOVIES ---
+message GetNowShowingMoviesRequest {
+    int32 page = 1;
+    int32 size = 2;
+}
+message GetNowShowingMoviesResponse {
+    repeated Movie movies = 1;
+}
+
+// --- GET RECOMMENDED MOVIES ---
+message GetRecommendedMoviesRequest {
+    string genre = 1;
+    int32 limit = 2;
+}
+message GetRecommendedMoviesResponse {
+    repeated Movie movies = 1;
+}
+
+// ===================== SERVICE =====================
 service MovieService {
     rpc GetMovies (GetMoviesRequest) returns (GetMoviesResponse);
+    rpc GetMovie (GetMovieRequest) returns (GetMovieResponse);
+    rpc CreateMovie (CreateMovieRequest) returns (CreateMovieResponse);
+    rpc UpdateMovie (UpdateMovieRequest) returns (UpdateMovieResponse);
+    rpc DeleteMovie (DeleteMovieRequest) returns (DeleteMovieResponse);
+    rpc GetUpcomingMovies (GetUpcomingMoviesRequest) returns (GetUpcomingMoviesResponse);
+    rpc GetNowShowingMovies (GetNowShowingMoviesRequest) returns (GetNowShowingMoviesResponse);
+    rpc GetRecommendedMovies (GetRecommendedMoviesRequest) returns (GetRecommendedMoviesResponse);
 }
 
+message Response{
+    google.protobuf.Any data = 1;
+    string message = 2;
+    int32 status = 3;
+    optional string error_code = 4;
+    optional Pagination pagination = 5;
+}
+message Pagination {
+    int32 page = 1;
+    int32 size = 2;
+    int32 total_pages = 3;
+    int32 total_items = 4;
+}
