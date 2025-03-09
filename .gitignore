@@ -10,7 +10,7 @@ Thumbs.db
 # ===================
 **/bin/
 **/obj/
-**/pkg/
+**/pkg/log
 **/vendor/
 **/coverage.out
 **/*.test

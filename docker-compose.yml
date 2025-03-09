@@ -3,7 +3,11 @@ version: "3"
 networks:
   kong-net:
     driver: bridge
+  user-service-net:
+    driver: bridge
+
 services:
+  # PostgreSQL for Kong
   postgres:
     image: postgres:13
     container_name: kong-database
@@ -17,6 +21,23 @@ services:
       - kong-net
     ports:
       - "5432:5432"
+
+  # PostgreSQL for User Service
+  user-postgres:
+    image: postgres:13
+    container_name: user-database
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_DB: user_service
+      POSTGRES_PASSWORD: userpass
+    volumes:
+      - user-data:/var/lib/postgresql/data
+    networks:
+      - user-service-net
+    ports:
+      - "5433:5432" # Exposing on a different host port
+
+  # Kong Migrations
   kong-migrations:
     image: kong/kong-gateway:3.9.0.1
     container_name: kong-migrations
@@ -33,6 +54,7 @@ services:
     entrypoint: ["/bin/sh", "-c", "kong migrations bootstrap"]
     restart: on-failure
 
+  # Kong Gateway
   kong:
     image: kong/kong-gateway:3.9.0.1
     container_name: kong-gateway
@@ -50,7 +72,7 @@ services:
       KONG_PROXY_LISTEN: 0.0.0.0:8000 http2, 0.0.0.0:8443 http2 ssl
       KONG_ADMIN_GUI_URL: http://localhost:8002
     volumes:
-      - ./protos:/protos/
+      - ./Protos:/Protos/
     ports:
       - "8000:8000"
       - "8443:8443"
@@ -65,41 +87,17 @@ services:
     depends_on:
       - kong-migrations
     restart: on-failure
-  # elasticsearch:
-  #   image: docker.elastic.co/elasticsearch/elasticsearch:8.17.1
-  #   container_name: elasticsearch
-  #   environment:
-  #     - node.name=elasticsearch
-  #     - cluster.name=datasearch
-  #     - bootstrap.memory_lock=true
-  #     - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-  #     - cluster.initial_master_nodes=elasticsearch
-  #     - xpack.security.enabled=false
-  #     - xpack.security.enrollment.enabled=false
-  #   ulimits:
-  #     memlock:
-  #       soft: -1
-  #       hard: -1
-  #   ports:
-  #     - "9200:9200"
-  #   volumes:
-  #     - esdata:/usr/share/elasticsearch/data
 
-  # kibana:
-  #   image: docker.elastic.co/kibana/kibana:8.17.1
-  #   environment:
-  #     - xpack.security.enabled=false
-  #   ports:
-  #     - "5601:5601"
-  # redis:
-  #   image: redis:latest
-  #   ports:
-  #     - "6379:6379"
+  # RabbitMQ
   rabbit-mq:
     image: rabbitmq:4.0-management
+    container_name: rabbit-mq
     ports:
       - "15672:15672"
       - "5672:5672"
+    networks:
+      - user-service-net
+
 volumes:
-  esdata: {}
   kong-data: {}
+  user-data: {}

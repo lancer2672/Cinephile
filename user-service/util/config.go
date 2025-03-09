@@ -5,6 +5,8 @@ import (
 )
 
 type Config struct {
+	DbDriver    string `mapstructure:"DBDRIVER"`
+	DbSource    string `mapstructure:"DBSOURCE"`
 	APIEndpoint string `mapstructure:"GRPC_ENDPOINT"`
 }
 
