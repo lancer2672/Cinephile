@@ -2,7 +2,7 @@ _format_version: "3.0"
 services:
 - connect_timeout: 60000
   enabled: true
-  host: 192.168.1.9
+  host: 192.168.0.58
   name: backend-grpc-service
   port: 15002
   protocol: grpc
@@ -25,7 +25,7 @@ services:
   write_timeout: 60000
 - connect_timeout: 60000
   enabled: true
-  host: 192.168.1.9
+  host: 192.168.0.58
   name: grpc-service
   plugins:
   - config:

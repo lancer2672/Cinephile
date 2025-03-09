@@ -1,9 +1,13 @@
 package main
 
 import (
+	"database/sql"
 	"net"
 
-	"github.com/vudinhan2525/TaskFlow/gapi"
+	_ "github.com/lib/pq"
+	"github.com/vudinhan2525/TaskFlow/internal/gapi"
+	"github.com/vudinhan2525/TaskFlow/internal/repository"
+	"github.com/vudinhan2525/TaskFlow/internal/usecase"
 	"github.com/vudinhan2525/TaskFlow/pb"
 	"github.com/vudinhan2525/TaskFlow/pkg/log"
 	"github.com/vudinhan2525/TaskFlow/util"
@@ -16,10 +20,22 @@ func main() {
 	if err != nil {
 		log.Logger.Fatal("Error when loading env!!", err)
 	}
-	runGrpcServer(config)
+
+	db, err := sql.Open(config.DbDriver, config.DbSource)
+	if err != nil {
+		log.Logger.Fatal("Cannot connect to database:", err)
+	}
+	log.Logger.Info("🚀 Connect success to PostGreSQL")
+	defer db.Close()
+
+	userRepo := repository.NewUserRepository(db)
+	userUseCase := usecase.NewUserUseCase(userRepo)
+
+	runGrpcServer(config, userUseCase)
 }
-func runGrpcServer(config util.Config) {
-	server, err := gapi.NewServer(config)
+func runGrpcServer(config util.Config, userUseCase usecase.UserUseCase) {
+
+	server, err := gapi.NewServer(config, userUseCase)
 	if err != nil {
 		log.Logger.Fatal("Error when creating server")
 	}

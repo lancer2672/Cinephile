@@ -6,7 +6,10 @@ option go_package = "/pb";
 
 
 message CreateUserReq {      
-	string user_id = 1;
+	string email = 1;
+	string full_name = 2;
+	string password = 3;
+	string role = 4;
 }
 message CreateUserRes {    
 	User data = 1;
