@@ -2,9 +2,9 @@ package handler
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/lancer2672/cinephile/main/internal/app"
+	"github.com/lancer2672/cinephile/main/internal/domain/model"
 	"github.com/lancer2672/cinephile/main/internal/domain/repository"
 	converter "github.com/lancer2672/cinephile/main/internal/interface/grpc/converter"
 	"github.com/lancer2672/cinephile/main/internal/interface/grpc/pb"
@@ -25,9 +25,9 @@ func RegisterMovieHandler(grpcServer *grpc.Server, service repository.Store) {
 }
 
 func (m *MovieHandler) GetMovies(ctx context.Context, req *pb.GetMoviesRequest) (*pb.GetMoviesResponse, error) {
-	movies, err := m.service.GetMovies(ctx)
+	filter := model.MovieFilter{}
+	movies, _, err := m.service.GetMovies(ctx, filter)
 	if err != nil {
-		fmt.Println(">>>ERROR: ", err)
 		return nil, status.Errorf(codes.Internal, "Failed to get recent movies")
 	}
 
@@ -37,4 +37,13 @@ func (m *MovieHandler) GetMovies(ctx context.Context, req *pb.GetMoviesRequest) 
 	}
 
 	return &pb.GetMoviesResponse{Movies: result}, nil
+}
+
+func (m *MovieHandler) GetMovieByID(ctx context.Context, req *pb.GetMovieRequest) (*pb.GetMovieResponse, error) {
+	movie, err := m.service.GetMovieByID(ctx, req.MovieId)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "Failed to get movie by id")
+	}
+
+	return &pb.GetMovieResponse{Movie: converter.ToProtoMovie(movie)}, nil
 }

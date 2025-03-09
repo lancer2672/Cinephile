@@ -8,8 +8,8 @@ import (
 )
 
 type MovieService interface {
-	GetMovies(context.Context) ([]model.Movie, error)
-	GetMovieByID(context.Context, int) (*model.Movie, error)
+	GetMovies(context.Context, model.MovieFilter) ([]model.Movie, int64, error)
+	GetMovieByID(context.Context, int64) (*model.Movie, error)
 }
 
 type movieService struct {
@@ -20,10 +20,18 @@ func NewMovieApp(store repository.Store) MovieService {
 	return &movieService{store: store}
 }
 
-func (m *movieService) GetMovies(ctx context.Context) ([]model.Movie, error) {
-	return m.store.GetMovies(context.TODO())
+func (m *movieService) GetMovies(ctx context.Context, filter model.MovieFilter) ([]model.Movie, int64, error) {
+
+	movies, totalItem, err := m.store.GetMovies(ctx, filter)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	_ = totalItem
+	return movies, 0, nil
 }
 
-func (m *movieService) GetMovieByID(ctx context.Context, id int) (*model.Movie, error) {
-	return m.store.GetMovieByID(context.TODO(), id)
+func (m *movieService) GetMovieByID(ctx context.Context, id int64) (*model.Movie, error) {
+	// return m.store.GetMovieByID(context.TODO(), id)
+	return nil, nil
 }

@@ -12,16 +12,20 @@ func ToProtoMovie(m *model.Movie) *pb.Movie {
 	}
 
 	return &pb.Movie{
-		MovieId:            int64(m.ID),
-		Title:              m.Name,
-		Tags:               m.Tags,
-		Duration:           int64(m.Duration.Seconds()), // Chuyển `time.Duration` sang giây
-		AgeLimit:           int32(m.AgeLimit),
-		Director:           m.Director,
-		Actors:             m.Actors,
-		ReleaseDate:        timestamppb.New(m.ReleaseDate), // Chuyển `time.Time` sang `Timestamp`
-		ContentDescription: m.ContentDescription,
-		Trailer:            m.Trailer,
-		Poster:             m.Poster,
+		Id:          m.ID,
+		Title:       m.Title,
+		Duration:    m.Duration, // giữ đơn vị giây
+		AgeLimit:    m.AgeLimit,
+		Director:    m.Director,
+		Actors:      m.Actors,
+		ReleaseDate: timestamppb.New(m.ReleaseDate),
+		Description: m.Description,
+		Trailer:     m.Trailer,
+		Country:     m.Country,
+		Genre:       m.Genre,
+		Poster:      m.Poster,
+		Status:      m.Status,
+		CreatedAt:   timestamppb.New(m.CreatedAt),
+		UpdatedAt:   timestamppb.New(m.UpdatedAt),
 	}
 }

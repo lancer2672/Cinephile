@@ -12,7 +12,7 @@ import (
 const MovieColleciton = "movies"
 
 // GetMovieByID retrieves a movie by its ID
-func (m *MongoStore) GetMovieByID(ctx context.Context, id int) (*model.Movie, error) {
+func (m *MongoStore) GetMovieByID(ctx context.Context, id int64) (*model.Movie, error) {
 	var movie model.Movie
 	opts := options.FindOne().SetProjection(bson.D{{"_id", 0}})
 	filter := bson.D{{"id", id}}
@@ -24,21 +24,21 @@ func (m *MongoStore) GetMovieByID(ctx context.Context, id int) (*model.Movie, er
 }
 
 // GetMovies retrieves all movies
-func (m *MongoStore) GetMovies(ctx context.Context) ([]model.Movie, error) {
+func (m *MongoStore) GetMovies(ctx context.Context, filter model.MovieFilter) ([]model.Movie, int64, error) {
 	var movies []model.Movie
 	opts := options.Find().SetProjection(bson.D{{"_id", 0}})
 	cursor, err := m.db.Collection(MovieColleciton).Find(ctx, bson.D{}, opts)
 	if err != nil {
-		return nil, errors.New("failed to get movies: " + err.Error())
+		return nil, 0, errors.New("failed to get movies: " + err.Error())
 	}
 	defer cursor.Close(ctx)
 	for cursor.Next(ctx) {
 		var movie model.Movie
 		err := cursor.Decode(&movie)
 		if err != nil {
-			return nil, errors.New("failed to decode movie: " + err.Error())
+			return nil, 0, errors.New("failed to decode movie: " + err.Error())
 		}
 		movies = append(movies, movie)
 	}
-	return movies, nil
+	return movies, -1, nil
 }

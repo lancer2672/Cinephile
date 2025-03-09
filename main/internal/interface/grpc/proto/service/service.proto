@@ -11,7 +11,7 @@ message Movie {
     int64 id = 1;
     string title = 2;
     int64 duration = 3;
-    int32 age_limit = 4;
+    string age_limit = 4;
     string director = 5;
     repeated string actors = 6;
     google.protobuf.Timestamp release_date = 7;
@@ -35,6 +35,8 @@ message GetMoviesRequest {
     string genre = 4;
     string country = 5;
     string search = 6;
+    string sort_by = 7;
+    string sort_order = 8;
 }
 message GetMoviesResponse {
     repeated Movie movies = 1;
